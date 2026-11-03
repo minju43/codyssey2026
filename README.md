@@ -24,8 +24,7 @@
 # 4. 수행 및 검증 로그
 ## 4.1 터미널 기본 조작 로그
 현재 위치 확인, 디렉토리 생성 및 이동, 파일 생성, 내용 확인, 복사, 이름 변경, 숨김 파일 포함 목록 조회를 CLI 환경에서 수행
-- [4.1 터미널 기본 조작 로그 바로가기](#41-터미널-기본-조작-로그)
-
+> ![터미널 기본 조작 로그](terminal_basic.png)
 ### 1) 현재 경로 확인
 
 ```
@@ -267,6 +266,7 @@ exit
 ### 3) Docker 운영 검증 (이미지/컨테이너 목록/리소스 확인)
 ```
 minju03@localhost:~/codyssey_precorse$ docker images
+                                      ℹ Info ->    U   In Use
 IMAGE               ID             DISK USAGE   CONTENT SIZE   EXTRA
 hello-world:latest
                     c567b231f656   25.9kB       9.49kB         U
@@ -278,8 +278,14 @@ fada7ad8424f   ubuntu        "bash"         31 seconds ago       Exited (0) 18 s
 ebc40d87ee6b   hello-world   "/hello"       About a minute ago   Exited (0) About a minute ago             cranky_easley
 23a4a181461e   hello-world   "/hello"       19 minutes ago       Exited (0) 19 minutes ago                 bold_mclean
 
-minju03@localhost:~$ docker stats --no-stream
-CONTAINER ID   NAME         CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O   PIDS
+minju03@localhost:~/codyssey_precorse$ docker logs ubuntu-test
+root@fada7ad8424f:/# ls
+bin  dev  home  lib64  mnt  proc  run  srv  tmp  var
+boot etc  lib   media  opt  root  sbin sys  usr
+root@fada7ad8424f:/# echo "Inside container"
+Inside container
+root@fada7ad8424f:/# exit
+exit
 ```
 
 ## 4.5 Dockerfile 기반 커스텀 웹 서버 컨테이너 & 포트 매핑
@@ -300,7 +306,8 @@ COPY app/ /usr/share/nginx/html/
 ```
 
 ### 3) 웹 문서 작성 및 빌드
-```minju03@localhost:~/codyssey_precorse$ mkdir -p ~/web-server/app
+```
+minju03@localhost:~/codyssey_precorse$ mkdir -p ~/web-server/app
 minju03@localhost:~/codyssey_precorse$ cd ~/web-server
 minju03@localhost:~/web-server$ echo "<h1>개발 워크스테이션 컨테이너 실습</h1>" > app/index.html
 minju03@localhost:~/web-server$ echo "FROM nginx:alpine" > Dockerfile
@@ -308,6 +315,10 @@ minju03@localhost:~/web-server$ echo "LABEL org.opencontainers.image.title=\"my-
 minju03@localhost:~/web-server$ echo "ENV APP_ENV=dev" >> Dockerfile
 minju03@localhost:~/web-server$ echo "COPY app/ /usr/share/nginx/html/" >> Dockerfile
 minju03@localhost:~/web-server$ cat Dockerfile
+FROM nginx:alpine
+LABEL org.opencontainers.image.title="my-custom-nginx"
+ENV APP_ENV=dev
+COPY app/ /usr/share/nginx/html/
 
 minju03@localhost:~/web-server$ docker build --no-cache -t my-web:1.0 .
 [+] Building 0.7s (7/7) FINISHED                         docker:default
