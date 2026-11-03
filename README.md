@@ -22,19 +22,17 @@
 - [x] Git 사용자 설정 및 VS Code / GitHub 원격 저장소 연동
 
 # 4. 수행 및 검증 로그
-## 4.1 터미널 기본 조작 로그
+# 4.1 터미널 기본 조작 로그
 현재 위치 확인, 디렉토리 생성 및 이동, 파일 생성, 내용 확인, 복사, 이름 변경, 숨김 파일 포함 목록 조회를 CLI 환경에서 수행
 
 # 1) 현재 경로 확인
-```
-minju03@localhost:~$ pwd
-/home/minju03
-```
+
+```minju03@localhost:~$ pwd
+/home/minju03```
+
 # 2) 디랙토리 생성 및 경로 이동
-```
-minju03@localhost:~$ mkdir -p ~/codyssey_precorse
-minju03@localhost:~$ cd ~/codyssey_precorse/
-```
+```minju03@localhost:~$ mkdir -p ~/codyssey_precorse
+minju03@localhost:~$ cd ~/codyssey_precorse/```
 # 3) 파일 생성 및 내용 확인
 ```
 minju03@localhost:~/codyssey_precorse$ echo "Hello codyssey" > test1.txt
