@@ -71,10 +71,10 @@ drwxr-x--- 13 minju03 minju03 4096 Oct 30 12:09 ..
 ### 1) 파일과 디렉토리 기존 권한 확인
 ```
 minju03@localhost:~/codyssey_precorse$ ls -l renamed.txt
--rw-r--r-- 1 minju03 minju03 15 Oct 30 12:10 renamed.txt
+-rw-r--r-- 1 minju03 minju03 15 Oct 30 12:40 renamed.txt
 minju03@localhost:~/codyssey_precorse$ mkdir test1_dir
 minju03@localhost:~/codyssey_precorse$ ls -ld test1_dir
-drwxr-xr-x 2 minju03 minju03 4096 Oct 30 12:10 test1_dir
+drwxr-xr-x 2 minju03 minju03 4096 Oct 30 12:40 test1_dir
 ```
 
 ### 2) 파일과 디렉토리 권한 변경 적용
@@ -86,9 +86,9 @@ minju03@localhost:~/codyssey_precorse$ chmod 744 test1_dir
 ### 3) 변경된 권한 확인
 ```
 minju03@localhost:~/codyssey_precorse$ ls -l renamed.txt
--rw------- 1 minju03 minju03 15 Oct 30 12:10 renamed.txt
+-rw------- 1 minju03 minju03 15 Oct 30 12:40 renamed.txt
 minju03@localhost:~/codyssey_precorse$ ls -ld test1_dir
-drwxr--r-- 2 minju03 minju03 4096 Oct 30 12:10 test1_dir
+drwxr--r-- 2 minju03 minju03 4096 Oct 30 12:40 test1_dir
 ```
 
 ## 4.3 Docker 설치 및 기본 점검
