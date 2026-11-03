@@ -9,6 +9,21 @@
 - Terminal: WSL2 Ubuntu
 - Docker version: 29.9.2
 - Git Version: 2.43.0
+## 2.1 프로젝트 디렉토리 구조
+프로젝트 루트(`~/codyssey_precorse`) 기준 디렉토리 트리 및 구성 요소별 역할입니다.
+```
+codyssey_precorse/
+├── README.md               # 프로젝트 개요, 수행 로그 및 환경 구축 기술 문서
+├── renamed.txt             # 권한 제어 실습용 파일 (chmod 600 적용)
+├── test1.txt                # Git 버전 관리 및 변경 추적 검증 파일
+├── test1_dir/              # 디렉토리 권한 제어 실습 폴더 (chmod 744 적용)
+├── docs/                   # 증빙 스크린샷 보관 디렉토리
+│   └── images/             # 터미널, 브라우저 포트 접속, Git 연동 캡처 이미지
+└── web-server/             # 웹 서버 컨테이너화 작업 디렉토리
+    ├── Dockerfile          # nginx:alpine 기반 커스텀 웹 서버 빌드 명세
+    └── app/
+        └── index.html      # 서빙 대상 정적 HTML 소스 파일 (바인드 마운트 연동)
+```
 
 # 3. 수행 항목 체크리스트
 - [x] 터미널 기본 조작 및 작업 디렉토리 구성
@@ -78,6 +93,7 @@ drwxr-xr-x 2 minju03 minju03 4096 Oct 30 12:40 test1_dir
 ```
 
 ### 2) 파일과 디렉토리 권한 변경 적용
+보안상 외부에 노출되면 안 되는 개인 설정 파일은 소유자만 읽고 쓸 수 있는 `600`으로 제한하고 디렉토리는 소유자의 탐색 권한(`x`)을 보장하면서 타인의 무단 수정을 막기 위해 `744`를 부여함.
 ```
 minju03@localhost:~/codyssey_precorse$ chmod 600 renamed.txt
 minju03@localhost:~/codyssey_precorse$ chmod 744 test1_dir
@@ -212,6 +228,11 @@ Server:
  Firewall Backend: iptables
 ```
 
+### 3) Docker 데몬 프로세스 및 서비스 상태 점검
+```
+sudo service docker status
+```
+
  ## 4.4 컨테이너 실행 및 기본 운영 실습
  > ![컨테이너 실행 및 기본 운영 실습](container_1.png)
 > ![컨테이너 실행 및 기본 운영 실습](container_2.png)
@@ -298,6 +319,7 @@ exit
 > ![Dockerfile](dockerfile_1.png)
 > ![Dockerfile](dockerfile_2.png)
 > ![Dockerfile](brower_8080.png)
+- 컨테이너 구동 전 호스트 포트 충돌을 방지하기 위해 `ss -tulpn | grep 8080`으로 사전 점유 여부를 검사한 후 실행
 ### 1) 베이스 이미지 및 커스텀 설정
 선택 베이스 이미지: nginx:alpine
 선택 이유: 경량 OS 위에서 효율적으로 정적 웹 페이지를 서빙하기 위해 채택함.
@@ -505,6 +527,19 @@ branch 'main' set up to track 'origin/main'.
 - 확인: 터미널 curl 요청 결과 정상 바이트가 반환됨을 확인하여 네트워크 및 컨테이너 동작에는 이상이 없음을 확인.
 - 해결: 네트워크 통신 및 포트 포워딩 동작 증빙에는 문제가 없음을 확인했으며, 웹 표준에 맞춰 HTML '<head>' 영역에 인코딩 메타태그를 주입하면 해결 가능함을 파악함.
 
+### Issue 4) [운영 가이드] 포트 충돌 발생 시 진단 및 해제 절차
+- 문제: 컨테이너 실행(`docker run -p 8080:80 ...`) 시 `Bind for 0.0.0.0:8080 failed: port is already allocated` 오류 발생
+- 원인 가설: 호스트 시스템의 다른 백그라운드 프로세스나 기존에 종료되지 않은 Docker 컨테이너가 8080 포트를 이미 점유하고 있을 것으로 추정
+- 확인:
+  ```
+  sudo lsof -i :8080 또는 ss -tulpn | grep 8080로 8080 포트를 점유 중인 프로세스 PID 확인
+  docker ps -a --filter "publish=8080"로 8080 포트를 사용하는 기존 도커 컨테이너 점검
+  ```
+- 해결:
+  1. 도커 컨테이너가 점유한 경우: docker rm -f <컨테이너ID>로 기존 컨테이너 삭제
+  2. 일반 프로세스가 점유한 경우: sudo kill -9 <확인된PID>로 프로세스 종료
+  3. 포트 해제 완료 후 컨테이너 재실행
+
 # 6. 핵심 개념 정리
 ## 1. 절대경로와 상대경로 차이
 - 절대경로: 최상위 루트 디렉토리 또는 사용자의 홈 디렉토리를 기준으로 파일이나 디렉토리의 고유한 위치를 나타냄. 현재 작업 위치에 영향을 받지 않고 고유한 경로를 유지함.
@@ -523,7 +558,7 @@ branch 'main' set up to track 'origin/main'.
 
 ## 5. Docker 볼륨의 동작 원리
 - 컨테이너 내부의 쓰기 가능한 레이어는 컨테이너 라이프사이클에 종속되어 있어 컨테이너가 삭제되면 저장된 데이터도 함께 영구 소멸하는 휘발성 특징을 가짐.
-- Docker 볼륨은 컨테이너 수명 주기와 수명 주기를 분리된 호스트 파일 시스템의 안전한 도커 관리 스토리지 영역을 사용하므로, 컨테이너를 강제 삭제하고 새로 생성해도 데이터가 영구 보존됨.
+- Docker 볼륨은 컨테이너 수명 주기와 분리된 호스트 파일 시스템의 안전한 도커 관리 스토리지 영역을 사용하므로, 컨테이너를 강제 삭제하고 새로 생성해도 데이터가 영구 보존됨.
 
 ## 6. Git과 GitHub의 차이
 - Git: 개발자의 로컬 컴퓨터에서 소스코드의 변경 이력을 추적하고 브랜치를 생성 및 병합하는 분산 버전 관리 도구.
