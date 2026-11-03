@@ -67,24 +67,24 @@ minju03@localhost:~/codyssey_precorse$ ls -ld test1_dir
 drwxr-xr-x 2 minju03 minju03 4096 Oct 30 12:10 test1_dir```
 
 # 2) 파일과 디렉토리 권한 변경 적용
-minju03@localhost:~/codyssey_precorse$ chmod 600 renamed.txt
-minju03@localhost:~/codyssey_precorse$ chmod 744 test1_dir
+```minju03@localhost:~/codyssey_precorse$ chmod 600 renamed.txt
+minju03@localhost:~/codyssey_precorse$ chmod 744 test1_dir```
 
 # 3) 변경된 권한 확인
-minju03@localhost:~/codyssey_precorse$ ls -l renamed.txt
+```minju03@localhost:~/codyssey_precorse$ ls -l renamed.txt
 -rw------- 1 minju03 minju03 15 Oct 30 12:10 renamed.txt
 minju03@localhost:~/codyssey_precorse$ ls -ld test1_dir
-drwxr--r-- 2 minju03 minju03 4096 Oct 30 12:10 test1_dir
+drwxr--r-- 2 minju03 minju03 4096 Oct 30 12:10 test1_dir```
 
 ## 4.3 Docker 설치 및 기본 점검
 Docker 엔진 버전 및 데몬 구동 상태, 시스템 정보를 점검
 
 # 1) Docker 버전 확인
-minju03@localhost:~/codyssey_precorse$ docker --version
-Docker version 29.9.2, build a82e528
+```minju03@localhost:~/codyssey_precorse$ docker --version
+Docker version 29.9.2, build a82e528```
 
 # 2) Docker 시스템 정보 확인
-minju03@localhost:~/codyssey_precorse$ docker info
+```minju03@localhost:~/codyssey_precorse$ docker info
 Client:
  Version:    29.9.2
  Context:    default
@@ -189,11 +189,11 @@ Server:
   127.0.0.0/8
   ::1/128
  Live Restore Enabled: false
- Firewall Backend: iptables
+ Firewall Backend: iptables```
 
  ## 4.4 컨테이너 실행 및 기본 운영 실습
  # 1) hello-world 컨테이너 실행
- minju03@localhost:~$ docker run hello-world
+``` minju03@localhost:~$ docker run hello-world
 Unable to find image 'hello-world:latest' locally
 latest: Pulling from library/hello-world
 4f55086f7dd0: Pull complete
@@ -220,10 +220,10 @@ Share images, automate workflows, and more with a free Docker ID:
  https://hub.docker.com/
 
 For more examples and ideas, visit:
- https://docs.docker.com/get-started/
+ https://docs.docker.com/get-started/```
 
 # 2) Ubuntu 컨테이너 내부 진입 및 명령 수행
-minju03@localhost:~/codyssey_precorse$ docker run -it --name ubuntu-test ubuntu bash
+```minju03@localhost:~/codyssey_precorse$ docker run -it --name ubuntu-test ubuntu bash
 Unable to find image 'ubuntu:latest' locally
 latest: Pulling from library/ubuntu
 f3f25b84a7d7: Pull complete
@@ -238,11 +238,11 @@ boot etc  lib   media  opt  root  sbin sys  usr
 root@fada7ad8424f:/# echo "Inside container"
 Inside container
 root@fada7ad8424f:/# exit
-exit
+exit```
 
 
 # 3) Docker 운영 검증 (이미지/컨테이너 목록/리소스 확인)
-minju03@localhost:~/codyssey_precorse$ docker images
+```minju03@localhost:~/codyssey_precorse$ docker images
 IMAGE               ID             DISK USAGE   CONTENT SIZE   EXTRA
 hello-world:latest
                     c567b231f656   25.9kB       9.49kB         U
@@ -255,7 +255,7 @@ ebc40d87ee6b   hello-world   "/hello"       About a minute ago   Exited (0) Abou
 23a4a181461e   hello-world   "/hello"       19 minutes ago       Exited (0) 19 minutes ago                 bold_mclean
 
 minju03@localhost:~$ docker stats --no-stream
-CONTAINER ID   NAME         CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O   PIDS
+CONTAINER ID   NAME         CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O   PIDS```
 
 ## 4.5 Dockerfile 기반 커스텀 웹 서버 컨테이너 & 포트 매핑
 # 1) 베이스 이미지 및 커스텀 설정
@@ -267,13 +267,13 @@ CONTAINER ID   NAME         CPU %     MEM USAGE / LIMIT     MEM %     NET I/O   
 - COPY: 로컬 소스코드를 Nginx 웹 루트 경로로 복사 반영
 
 # 2) Dockerfile 본문
-FROM nginx:alpine
+```FROM nginx:alpine
 LABEL org.opencontainers.image.title="my-custom-nginx"
 ENV APP_ENV=dev
-COPY app/ /usr/share/nginx/html/
+COPY app/ /usr/share/nginx/html/```
 
 # 3) 웹 문서 작성 및 빌드
-minju03@localhost:~/codyssey_precorse$ mkdir -p ~/web-server/app
+```minju03@localhost:~/codyssey_precorse$ mkdir -p ~/web-server/app
 minju03@localhost:~/codyssey_precorse$ cd ~/web-server
 minju03@localhost:~/web-server$ echo "<h1>개발 워크스테이션 컨테이너 실습</h1>" > app/index.html
 minju03@localhost:~/web-server$ echo "FROM nginx:alpine" > Dockerfile
@@ -306,89 +306,89 @@ minju03@localhost:~/web-server$ docker run -d -p 8080:80 --name my-web-8080 my-w
 cfa23a0c3fe87ebf5a0f1db8484fbaf71cf6dfaa5a6ddb3055b8008976a8e352
 
 minju03@localhost:~/web-server$ curl http://localhost:8080
-<h1>개발 워크스테이션 컨테이너 실습</h1>
+<h1>개발 워크스테이션 컨테이너 실습</h1>```
 
 
 
 ## 4.6 바인드 마운트(-v) 및 볼륨 영속성 검증
 # 4.6.1 바인트 마운트 실습
 # 1) 바인드 마운트 옵션(-v)을 적용하여 컨테이너 백그라운드 실행 (호스트 포트 8081 매핑)
-minju03@localhost:~/web-server$docker run -d -p 8081:80 --name my-web-mount -v$(pwd)/app:/usr/share/nginx/html nginx:alpine
+```minju03@localhost:~/web-server$docker run -d -p 8081:80 --name my-web-mount -v$(pwd)/app:/usr/share/nginx/html nginx:alpine
 Unable to find image 'nginx:alpine' locally
 alpine: Pulling from library/nginx
 Digest: sha256:785835ea65db4bba6f021acc0f3be91b0fef76a53fe41f8588c6698d2aed0606
 Status: Downloaded newer image for nginx:alpine
-f1bae6ac0df9df2369d1756196632014d4b80618233f09f9175c7a9288215298
+f1bae6ac0df9df2369d1756196632014d4b80618233f09f9175c7a9288215298```
 
 # 2) 수정 전 curl 접속 확인
-minju03@localhost:~/web-server$ curl http://localhost:8081
-<h1> 컨 테 이 너 실 습</h1>
+``minju03@localhost:~/web-server$ curl http://localhost:8081
+<h1> 컨 테 이 너 실 습</h1>```
 
 # 3) 호스트 파일(app/index.html) 내용 수정
-minju03@localhost:~/web-server$ echo "<h1>바인드 마운트 내용 변경 완료</h1>" > app/index.html
+```minju03@localhost:~/web-server$ echo "<h1>바인드 마운트 내용 변경 완료</h1>" > app/index.html```
 
 # 4) 컨테이너 재시작 없이 즉시 변경 사항 반영 확인
-minju03@localhost:~/web-server$ curl http://localhost:8081
-<h1>바인드 마운트 내용 변경 완료</h1>
+```minju03@localhost:~/web-server$ curl http://localhost:8081
+<h1>바인드 마운트 내용 변경 완료</h1>```
 
 # 4.6.2 Docker 볼륨 영속성 실습
 # 1) Docker 전용 볼륨 생성
-minju03@localhost:~/web-server$ docker volume create mydata
-mydata
+```minju03@localhost:~/web-server$ docker volume create mydata
+mydata```
 
 # 2) 첫 번째 컨테이너에 볼륨 마운트(/data) 및 백그라운드 구동
-minju03@localhost:~/web-server$ docker run -d --name vol-test1 -v mydata:/data ubuntu sleep infinity
-1d5a68a99c0324d8ce049f25d4b3cb0ff5e9fc8b95e70c5b81e2fe8f04d1039d
+```minju03@localhost:~/web-server$ docker run -d --name vol-test1 -v mydata:/data ubuntu sleep infinity
+1d5a68a99c0324d8ce049f25d4b3cb0ff5e9fc8b95e70c5b81e2fe8f04d1039d```
 
 # 3) 컨테이너 내부 볼륨 경로에 영속 데이터 기록 및 확인
-minju03@localhost:~/web-server$ docker exec -it vol-test1 bash -lc "echo 'persistent data' > /data/result.txt"
+```minju03@localhost:~/web-server$ docker exec -it vol-test1 bash -lc "echo 'persistent data' > /data/result.txt"
 minju03@localhost:~/web-server$ docker exec -it vol-test1 cat /data/result.txt
-persistent data
+persistent data```
 
 # 4) 첫 번째 컨테이너 강제 삭제 (라이프사이클 종료)
-minju03@localhost:~/web-server$ docker rm -f vol-test1
-vol-test1
+```minju03@localhost:~/web-server$ docker rm -f vol-test1
+vol-test1```
 
 # 5) 동일한 볼륨(mydata)을 마운트하여 두 번째 컨테이너 구동
-minju03@localhost:~/web-server$ docker run -d --name vol-test2 -v mydata:/data ubuntu sleep infinity
-95be237be3c85a2ae3015c51f35b9cf1e4c1e6c770302438ccc3fa7f3eae051b
+```minju03@localhost:~/web-server$ docker run -d --name vol-test2 -v mydata:/data ubuntu sleep infinity
+95be237be3c85a2ae3015c51f35b9cf1e4c1e6c770302438ccc3fa7f3eae051b```
 
 # 6) 이전 컨테이너에서 기록한 데이터 파일 보존 확인
-minju03@localhost:~/web-server$ docker exec -it vol-test2 cat /data/result/txt
+```minju03@localhost:~/web-server$ docker exec -it vol-test2 cat /data/result/txt
 cat: /data/result/txt: No such file or directory
 minju03@localhost:~/web-server$ docker exec -it vol-test2 cat /data/result.txt
-persistent data
+persistent data```
 
 ## 4.7 Git 설정 및 GitHub 연동
 Git 전역 설정, 로컬 저장소 초기화, 첫 커밋 생성 및 원격 저장소 푸시
 
 # 1) Git 전역 사용자 설정 및 확인
-minju03@localhost:~/web-server$ git config --global user.name "minju43"
+```minju03@localhost:~/web-server$ git config --global user.name "minju43"
 minju03@localhost:~/web-server$ git config --global user.email "zaqwsx343@o.cnu.ac.kr"
 minju03@localhost:~/web-server$ git config --global init.defaultBranch main
 minju03@localhost:~/web-server$ git config --list
 user.name=minju43
 user.email=zaqwsx343@o.cnu.ac.kr
-init.defaultbranch=main
+init.defaultbranch=main```
 
 # 2) 실습 작업 디렉토리 이동 및 Git 저장소 초기화
-minju03@localhost:~/web-server$ git init
+```minju03@localhost:~/web-server$ git init
 Initialized empty Git repository in /home/minju03/web-server/.git/
 minju03@localhost:~/web-server$ cd ..
 minju03@localhost:~$ cd codyssey_precorse/
 minju03@localhost:~/codyssey_precorse$ git init
 Initialized empty Git repository in /home/minju03/codyssey_precorse/.git/
-
+```
 # 3) 실습 파일 스테이징 및 첫 커밋 생성
-minju03@localhost:~/codyssey_precorse$ git add .
+```minju03@localhost:~/codyssey_precorse$ git add .
 minju03@localhost:~/codyssey_precorse$ git commit -m "feat: 개발 환경 미션 완료"
 [main (root-commit) bbbfffe] feat: 개발 환경 미션 완료
  2 files changed, 2 insertions(+)
  create mode 100644 renamed.txt
- create mode 100644 test.txt
+ create mode 100644 test.txt```
 
 # 4) Git 연결 및 main branch 푸시
-minju03@localhost:~/codyssey_precorse$ git remote add origin https://github.com/minju43/codyssey2026.git
+```minju03@localhost:~/codyssey_precorse$ git remote add origin https://github.com/minju43/codyssey2026.git
 minju03@localhost:~/codyssey_precorse$ git branch -M main
 minju03@localhost:~/codyssey_precorse$ git push -u origin main
 Username for 'https://github.com': minju43
@@ -401,7 +401,7 @@ Writing objects: 100% (3/3), 272 bytes | 14.00 KiB/s, done.
 Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
 To https://github.com/minju43/codyssey2026.git
  * [new branch]      main -> main
-branch 'main' set up to track 'origin/main'.
+branch 'main' set up to track 'origin/main'.```
 
 # 5. 트러블슈팅
 # Issue 1) CLI 파일 이동/이름 변경 시 대상 파일 미인지 오류
