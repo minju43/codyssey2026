@@ -26,40 +26,45 @@
 현재 위치 확인, 디렉토리 생성 및 이동, 파일 생성, 내용 확인, 복사, 이름 변경, 숨김 파일 포함 목록 조회를 CLI 환경에서 수행
 
 # 1) 현재 경로 확인
+```
 minju03@localhost:~$ pwd
 /home/minju03
+```
 # 2) 디랙토리 생성 및 경로 이동
+```
 minju03@localhost:~$ mkdir -p ~/codyssey_precorse
 minju03@localhost:~$ cd ~/codyssey_precorse/
-
+```
 # 3) 파일 생성 및 내용 확인
+```
 minju03@localhost:~/codyssey_precorse$ echo "Hello codyssey" > test1.txt
 minju03@localhost:~/codyssey_precorse$ cat test1.txt
 Hello codyssey
-
+```
 # 4) 파일 복사 및 복사본 확인
+```
 minju03@localhost:~/codyssey_precorse$ cp test1.txt copy1.txt
 minju03@localhost:~/codyssey_precorse$ cat copy1.txt
 Hello codyssey
-
+```
 # 5) 파일 이름 변경 및 목록 확인
-minju03@localhost:~/codyssey_precorse$ mv copy1.txt renamed.txt
+``minju03@localhost:~/codyssey_precorse$ mv copy1.txt renamed.txt
 minju03@localhost:~/codyssey_precorse$ ls -la
 total 16
 drwxr-xr-x  2 minju03 minju03 4096 Oct 30 12:10 .
 drwxr-x--- 13 minju03 minju03 4096 Oct 30 12:09 ..
 -rw-r--r--  1 minju03 minju03   15 Oct 30 12:10 renamed.txt
--rw-r--r--  1 minju03 minju03   15 Oct 30 12:09 test1.txt
+-rw-r--r--  1 minju03 minju03   15 Oct 30 12:09 test1.txt```
 
 ## 4.2 권한 실습
 'chmod' 명령어를 사용하여 파일 1개와 디렉토리 1개의 접근 권한을 확인하고 설정하는 실습 수행
 
 # 1) 파일과 디렉토리 기존 권한 확인
-minju03@localhost:~/codyssey_precorse$ ls -l renamed.txt
+```minju03@localhost:~/codyssey_precorse$ ls -l renamed.txt
 -rw-r--r-- 1 minju03 minju03 15 Oct 30 12:10 renamed.txt
 minju03@localhost:~/codyssey_precorse$ mkdir test1_dir
 minju03@localhost:~/codyssey_precorse$ ls -ld test1_dir
-drwxr-xr-x 2 minju03 minju03 4096 Oct 30 12:10 test1_dir
+drwxr-xr-x 2 minju03 minju03 4096 Oct 30 12:10 test1_dir```
 
 # 2) 파일과 디렉토리 권한 변경 적용
 minju03@localhost:~/codyssey_precorse$ chmod 600 renamed.txt
