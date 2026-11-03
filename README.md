@@ -66,6 +66,7 @@ drwxr-x--- 13 minju03 minju03 4096 Oct 30 12:09 ..
 
 ## 4.2 권한 실습
 'chmod' 명령어를 사용하여 파일 1개와 디렉토리 1개의 접근 권한을 확인하고 설정하는 실습 수행
+> ![권한 실습](chmod.png)
 
 ### 1) 파일과 디렉토리 기존 권한 확인
 ```
@@ -92,7 +93,9 @@ drwxr--r-- 2 minju03 minju03 4096 Oct 30 12:40 test1_dir
 
 ## 4.3 Docker 설치 및 기본 점검
 Docker 엔진 버전 및 데몬 구동 상태, 시스템 정보를 점검
-
+> ![Docker 설치 및 기본 점검](docker_1.png)
+> ![Docker 설치 및 기본 점검](docker_2.png)
+> ![Docker 설치 및 기본 점검](docker_3.png)
 ### 1) Docker 버전 확인
 ```
 minju03@localhost:~/codyssey_precorse$ docker --version
@@ -210,6 +213,9 @@ Server:
 ```
 
  ## 4.4 컨테이너 실행 및 기본 운영 실습
+ > ![컨테이너 실행 및 기본 운영 실습](container_1.png)
+> ![컨테이너 실행 및 기본 운영 실습](container_2.png)
+> ![컨테이너 실행 및 기본 운영 실습](container_3.png)
  ### 1) hello-world 컨테이너 실행
 ```
 minju03@localhost:~$ docker run hello-world
@@ -289,6 +295,9 @@ exit
 ```
 
 ## 4.5 Dockerfile 기반 커스텀 웹 서버 컨테이너 & 포트 매핑
+> ![Dockerfile](dockerfile_1.png)
+> ![Dockerfile](dockerfile_2.png)
+> ![Dockerfile](brower_8080.png)
 ### 1) 베이스 이미지 및 커스텀 설정
 선택 베이스 이미지: nginx:alpine
 선택 이유: 경량 OS 위에서 효율적으로 정적 웹 페이지를 서빙하기 위해 채택함.
@@ -351,6 +360,7 @@ minju03@localhost:~/web-server$ curl http://localhost:8080
 
 # 4.6 바인드 마운트(-v) 및 볼륨 영속성 검증
 ## 4.6.1 바인트 마운트 실습
+> ![바인드 마운트](bind.png)
 ### 1) 바인드 마운트 옵션(-v)을 적용하여 컨테이너 백그라운드 실행 (호스트 포트 8081 매핑)
 ```
 minju03@localhost:~/web-server$docker run -d -p 8081:80 --name my-web-mount -v$(pwd)/app:/usr/share/nginx/html nginx:alpine
@@ -373,11 +383,13 @@ minju03@localhost:~/web-server$ echo "<h1>바인드 마운트 내용 변경 완�
 ```
 
 ### 4) 컨테이너 재시작 없이 즉시 변경 사항 반영 확인
-```minju03@localhost:~/web-server$ curl http://localhost:8081
+```
+minju03@localhost:~/web-server$ curl http://localhost:8081
 <h1>바인드 마운트 내용 변경 완료</h1>
 ```
 
 ## 4.6.2 Docker 볼륨 영속성 실습
+> ![Docker 볼륨](docker_volume.png)
 ### 1) Docker 전용 볼륨 생성
 ```
 minju03@localhost:~/web-server$ docker volume create mydata
@@ -420,6 +432,10 @@ persistent data
 ## 4.7 Git 설정 및 GitHub 연동
 Git 전역 설정, 로컬 저장소 초기화, 첫 커밋 생성 및 원격 저장소 푸시
 
+> ![git 설정](git_setting.png)
+> ![git 초기화, 커밋](git_init_commit.png)
+> ![git branch](git_branch.png)
+> ![git_push](git_push.png)
 ### 1) Git 전역 사용자 설정 및 확인
 ```
 minju03@localhost:~/web-server$ git config --global user.name "minju43"
@@ -481,6 +497,13 @@ branch 'main' set up to track 'origin/main'.
 - 원인 가설: Dockerfile 작성 시 정적 파일 복사 대상 목적지 경로에 오타가 있어 파일이 기본 웹루트 디렉토리로 복사되지 못했을 것으로 판단.
 - 확인: cat Dockerfile로 설정 내용을 확인한 결과 목적지 경로가 /usr/share/nginx/html/이 아닌 /user/share/nginx/html/로 오타가 입력되어 있음.
 - 해결: 경로 오타를 수정한 뒤 기존 컨테이너를 삭제하고 docker build --no-cache -t my-web:1.0 . 명령어로 캐시 없이 재빌드하여 커스텀 문구가 정상 출력되도록 조치.
+> ![기본 브라우저 출력](Issue2.png)
+
+### Issue 3) 브라우저 접속 시 한글 문자 깨짐
+- 문제: 'curl' 명령어로는 한글이 정상 출력되었으나, 브라우저 접속 시 한글이 깨짐.
+- 원인 가설: HTML 파일 내에 UTF-8 인코딩 메타태그가 정의되지 않아 브라우저가 기본 문자셋으로 렌더링하면서 발생한 현상으로 판단.
+- 확인: 터미널 curl 요청 결과 정상 바이트가 반환됨을 확인하여 네트워크 및 컨테이너 동작에는 이상이 없음을 확인.
+- 해결: 네트워크 통신 및 포트 포워딩 동작 증빙에는 문제가 없음을 확인했으며, 웹 표준에 맞춰 HTML '<head>' 영역에 인코딩 메타태그를 주입하면 해결 가능함을 파악함.
 
 # 6. 핵심 개념 정리
 ## 1. 절대경로와 상대경로 차이
@@ -499,7 +522,7 @@ branch 'main' set up to track 'origin/main'.
 : 컨테이너는 호스트 OS와 격리된 독자적인 가상 네트워크 네임스페이스와 내부 IP를 가짐. 따라서 호스트 컴퓨터나 외부 브라우저에서 컨테이너 내부 서비스에 접근하려면 호스트의 특정 포트와 컨테이터 내부 포트를 연결해 트래픽을 전달해 주는 포트 포워딩 터널링 설정이 필요함.
 
 ## 5. Docker 볼륨의 동작 원리
-- 컨테이너 내부의 쓰기 가능한 레이어는 컨테이너 라이프사이클에 종송되어 있어 컨테이너가 삭제되면 저장된 데이터도 함께 영구 소멸하는 휘발성 특징을 가짐.
+- 컨테이너 내부의 쓰기 가능한 레이어는 컨테이너 라이프사이클에 종속되어 있어 컨테이너가 삭제되면 저장된 데이터도 함께 영구 소멸하는 휘발성 특징을 가짐.
 - Docker 볼륨은 컨테이너 수명 주기와 수명 주기를 분리된 호스트 파일 시스템의 안전한 도커 관리 스토리지 영역을 사용하므로, 컨테이너를 강제 삭제하고 새로 생성해도 데이터가 영구 보존됨.
 
 ## 6. Git과 GitHub의 차이
