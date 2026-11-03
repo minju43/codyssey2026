@@ -48,7 +48,7 @@ minju03@localhost:~/codyssey_precorse$ cat copy1.txt
 Hello codyssey
 ```
 # 5) 파일 이름 변경 및 목록 확인
-``minju03@localhost:~/codyssey_precorse$ mv copy1.txt renamed.txt
+```minju03@localhost:~/codyssey_precorse$ mv copy1.txt renamed.txt
 minju03@localhost:~/codyssey_precorse$ ls -la
 total 16
 drwxr-xr-x  2 minju03 minju03 4096 Oct 30 12:10 .
