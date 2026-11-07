@@ -1,4 +1,6 @@
 import sys
+import json
+import os
 
 class Quiz:
     def __init__(self, question, choices, answer):
@@ -16,18 +18,27 @@ class Quiz:
     
     def check_answer(self, user_answer):
         return self.answer == user_answer
+    
+    def to_dict(self):
+        return {
+            "question": self.question,
+            "choices": self.choices,
+            "answer": self.answer
+        }
 class QuizGame:
     def __init__(self):
-        # 나중에 state.json에서 데이터를 불러올 때 사용할 속성들
-        
         self.best_score = 0
-        self.quizzes = [
-            Quiz("이 문제의 정답은 1번일 때, 정답은?", ["2", "1", "1번", "정답"], 1),
-            Quiz("'우리 한 번 싸우면 이틀은 가니까' 다음에 이어질 가사는?", ["싸우지 말자", "싸우고 친구랑 놀러 갈게", "딱 세 번만 참으려 했는데", "네가 좀 참아 줘"], 3),
-            Quiz("다음 중 가장 재미있는 게임은?", ["LOL", "발로란트", "크레이지아케이드", "오버워치"], 4),
-            Quiz("코디세이 올인원 입학연수과정에서 동료학습평가 시 받아야 하는 PASS의 개수는?", ["1", "2", "3", "100"], 3),
-            Quiz("충남대학교 컴퓨터융합학부에서 가장 귀여운 교수님은?", ["장진수 교수님", "이영석 교수님", "김기일 교수님", "조승범 교수님"], 1)
-        ]
+        self.quizzes = []
+        
+        if not self.load_data():
+            self.quizzes = [
+                Quiz("이 문제의 정답은 1번일 때, 정답은?", ["2", "1", "1번", "정답"], 1),
+                Quiz("'우리 한 번 싸우면 이틀은 가니까' 다음에 이어질 가사는?", ["싸우지 말자", "싸우고 친구랑 놀러 갈게", "딱 세 번만 참으려 했는데", "네가 좀 참아 줘"], 3),
+                Quiz("다음 중 가장 재미있는 게임은?", ["LOL", "발로란트", "크레이지아케이드", "오버워치"], 4),
+                Quiz("코디세이 올인원 입학연수과정에서 동료학습평가 시 받아야 하는 PASS의 개수는?", ["1", "2", "3", "100"], 3),
+                Quiz("충남대학교 컴퓨터융합학부에서 가장 귀여운 교수님은?", ["장진수 교수님", "이영석 교수님", "김기일 교수님", "조승범 교수님"], 1)
+            ]
+            self.save_data()
     def play_quiz(self):
         if not self.quizzes:
             print("등록된 퀴즈가 없습니다. 퀴즈를 먼저 추가해 주세요. 😅")
@@ -64,9 +75,57 @@ class QuizGame:
         if correct_count > self.best_score:
             print("새로운 최고 점수입니다!")
             self.best_score = correct_count
+            self.best_score()
         print("========================================")
         
+    def add_quiz(self):
+        print("\n새로운 퀴즈를 추가합니다.")
+        question =input("문제를 입력하세요: ").strip()
+        if not question:
+            print("빈 입력은 허용하지 않습니다. 추가를 취소합니다.")
+            return
+        choices = []
+        for i in range(1, 5):
+            while True:
+                choice = input(f"선택지 {i}: ").strip()
+                if choice:
+                    choices.append(choice)
+                    break
+                print("빈 입력은 허용되지 않습니다. 다시 입력해 주세요.")
+            
+        while True:
+            try:
+                ans_str = input("정답 번호 (1-4): ").strip()
+                if not ans_str:
+                    print("빈 입력입니다.")
+                    continue
+                answer = int(ans_str)
+                if answer < 1 or answer > 4:
+                    print("1-4 사이의 숫자를 입력하세요.")
+                    continue
+                break
+            except ValueError:
+                print("잘못된 입력입니다. 숫자를 입력하세요.")
 
+        self.quizzes.append(Quiz(question, choices, answer))
+        print("\n 퀴즈가 성공적으로 추가되었습니다!")
+        self.save_data()
+            
+    def show_quizzes(self):
+        if not self.quizzes:
+            print("\n등록된 퀴즈가 없습니다")
+            return
+        print(f"\n등록된 퀴즈 목록 (총 {len(self.quizzes)}개)")
+        print("========================================")
+        for i, quiz in enumerate(self.quizzes, 1):
+            print(f"[{i}] {quiz.question}")
+        print("========================================")
+            
+    def show_score(self):
+        print("\n========================================")
+        print(f"최고 점수: {self.best_score}문제 정답")
+        print("========================================")
+    
     def display_menu(self):
         print("\n========================================")
         print("        🎯 나만의 퀴즈 게임 🎯")
@@ -78,6 +137,35 @@ class QuizGame:
         print("5. 종료")
         print("========================================")
 
+    def save_data(self):
+        try:
+            data = {
+                "quizzes": [quiz.to_dict() for quiz in self.quizzes],
+                "best_score": self.best_score
+            }
+            with open("state.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            print(f"데이터 저장 중 오류가 발생했습니다: {e}")
+    
+    def load_data(self):
+        if not os.path.exists("state.json"):
+            return False
+        
+        try:
+            with open("state.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+                
+            self.best_score = data.get("best_score", 0)
+            self.quizzes = []
+            for q in data.get("quizzes", []):
+                self.quizzes.append(Quiz(q["question"], q["choices"], q["answer"]))
+            print("저장된 데이터를 불러왔습니다.")
+            return True
+        except (json.JSONDecodeError, KeyError) as e:
+            print("데이터 파일이 손상되었습니다. 기본 데이터로 시작합니다.")
+            return False
+    
     def run(self):
         while True:
             self.display_menu()
@@ -102,11 +190,11 @@ class QuizGame:
                 if choice == 1:
                     self.play_quiz()
                 elif choice == 2:
-                    print("📌 퀴즈 추가 기능은 곧 추가됩니다.")
+                    self.add_quiz()
                 elif choice == 3:
-                    print("📋 퀴즈 목록 기능은 곧 추가됩니다.")
+                    self.show_quizzes()
                 elif choice == 4:
-                    print("🏆 점수 확인 기능은 곧 추가됩니다.")
+                    self.show_score()
                 elif choice == 5:
                     print("게임을 종료합니다. 안녕히 가세요!")
                     break
@@ -116,6 +204,7 @@ class QuizGame:
             except (KeyboardInterrupt, EOFError):
                 # Ctrl+C 또는 입력 스트림 종료 시 안전하게 종료
                 print("\n⚠️ 비정상 종료 감지! 데이터를 안전하게 보존하고 종료합니다.")
+                self.save_data()
                 sys.exit(0)
 
 if __name__ == "__main__":
