@@ -1,6 +1,7 @@
 import sys
 import json
 import os
+import random
 
 class Quiz:
     def __init__(self, question, choices, answer):
@@ -43,10 +44,29 @@ class QuizGame:
         if not self.quizzes:
             print("등록된 퀴즈가 없습니다. 퀴즈를 먼저 추가해 주세요. 😅")
             return
-        print(f"\n📑 퀴즈를 시작합니다! 문제의 개수는 {len(self.quizzes)}개입니다.")
+        
+        while True:
+            try:
+                count_str = input(f"\n문제 개수를 골라 주세요. (1-{len(self.quizzes)}, 취소: 0): ").strip()
+                if not count_str:
+                    continue
+                play_count = int(count_str)
+                
+                if play_count == 0:
+                    print("퀴즈 풀기를 취소합니다.")
+                    return
+                if 1 <= play_count <= len(self.quizzes):
+                    break
+                print(f"1에서 {len(self.quizzes)} 사이의 숫자를 입력하세요.")
+            except ValueError:
+                print("숫자를 입력하세요")
+                
+        print(f"\n📑 퀴즈를 시작합니다! 문제의 개수는 {play_count} 개입니다.")
         correct_count = 0
         
-        for i, quiz in enumerate(self.quizzes, 1):
+        selected_quizzes = random.sample(self.quizzes, play_count)
+        
+        for i, quiz in enumerate(selected_quizzes, 1):
             quiz.display(i)
             while True:
                 try:
@@ -68,14 +88,13 @@ class QuizGame:
             else:
                 print("오답입니다.")
         #결과 출력 및 최고 점수 갱신
-        score_percent = int((correct_count / len(self.quizzes)) * 100)
+        score_percent = int((correct_count / play_count) * 100)
         print("\n========================================")
-        print(f"결과: {len(self.quizzes)} 문제 중 {correct_count} 문제 정답! ({score_percent}점)")
+        print(f"결과: {play_count} 문제 중 {correct_count} 문제 정답! ({score_percent}점)")
         
         if correct_count > self.best_score:
             print("새로운 최고 점수입니다!")
             self.best_score = correct_count
-            self.best_score()
         print("========================================")
         
     def add_quiz(self):
