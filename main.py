@@ -2,6 +2,7 @@ import sys
 import json
 import os
 import random
+import datetime
 
 class Quiz:
     def __init__(self, question, choices, answer, hint="제공된 힌트가 없습니다."):
@@ -33,6 +34,7 @@ class QuizGame:
     def __init__(self):
         self.best_score = 0
         self.quizzes = []
+        self.history = []
         
         if not self.load_data():
             self.quizzes = [
@@ -137,6 +139,10 @@ class QuizGame:
             print("😲 새로운 최고 점수입니다!")
             self.best_score = correct_count
         print("========================================")
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.history.append({"data": now, "played": play_count, "score": correct_count})
+        self.save_data()
+        
         
     def add_quiz(self):
         print("\n➕ 새로운 퀴즈를 추가합니다.")
@@ -175,6 +181,7 @@ class QuizGame:
         self.quizzes.append(Quiz(question, choices, answer, hint))
         print("\n 퀴즈가 성공적으로 추가됐습니다.")
         self.save_data()
+        
     def delete_quiz(self):
         self.show_quizzes()
         if not self.quizzes:
@@ -211,8 +218,18 @@ class QuizGame:
             
     def show_score(self):
         print("\n========================================")
-        print(f"🎮 최고 점수: {self.best_score}문제 정답")
+        print(f"🎮 최고 점수: {self.best_score}점")
         print("========================================")
+        print("🗒 최근 플레이 기록")
+        if not hasattr(self, 'history') or not self.history:
+            print("아직 플레이 기록이 없습니다.")
+        else:
+            for record in self.history[-5:]:
+                played = record.get('played', 0)
+                score = record.get('score', 0)
+                percent = int((score / played) * 100) if played > 0 else 0
+                print(f"- {record.get('date', '기록 없음')} | {played}문제 중 {score}점 ({percent}%)")
+                print("========================================")
     
     def display_menu(self):
         print("\n========================================")
@@ -230,7 +247,8 @@ class QuizGame:
         try:
             data = {
                 "quizzes": [quiz.to_dict() for quiz in self.quizzes],
-                "best_score": self.best_score
+                "best_score": self.best_score,
+                "history": self.history
             }
             with open("state.json", "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
@@ -244,6 +262,7 @@ class QuizGame:
         try:
             with open("state.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
+                self.history = data.get("history", [])
                 
             self.best_score = data.get("best_score", 0)
             self.history = data.get("history", [])
