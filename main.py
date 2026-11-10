@@ -89,8 +89,6 @@ class QuizGame:
                 print(f"1에서 {len(self.quizzes)} 사이의 숫자를 입력하세요.")
             except ValueError:
                 print("숫자를 입력하세요")
-        
-
                 
         print(f"\n📑 퀴즈를 시작합니다! 문제의 개수는 {play_count} 개입니다.")
         correct_count = 0
@@ -177,6 +175,29 @@ class QuizGame:
         self.quizzes.append(Quiz(question, choices, answer, hint))
         print("\n 퀴즈가 성공적으로 추가됐습니다.")
         self.save_data()
+    def delete_quiz(self):
+        self.show_quizzes()
+        if not self.quizzes:
+            return
+        while True:
+            try:
+                del_str = input("\n삭제할 퀴즈 번호를 입력하세요 (취소: 0): ").strip()
+                if not del_str:
+                    continue
+                del_idx = int(del_str)
+                
+                if del_idx == 0:
+                    print("취소했습니다.")
+                    return
+                if 1 <= del_idx <= len(self.quizzes):
+                    deleted = self.quizzes.pop(del_idx - 1)
+                    self.save_data()
+                    return
+                else:
+                    print("⚠️ 목록에 없는 번호입니다.")
+            except ValueError:
+                print("⚠️ 숫자를 입력하세요.")
+                    
             
     def show_quizzes(self):
         if not self.quizzes:
@@ -201,7 +222,8 @@ class QuizGame:
         print("2. 퀴즈 추가")
         print("3. 퀴즈 목록")
         print("4. 점수 확인")
-        print("5. 종료")
+        print("5. 퀴즈 삭제")
+        print("6. 종료")
         print("========================================")
 
     def save_data(self):
@@ -265,6 +287,8 @@ class QuizGame:
                 elif choice == 4:
                     self.show_score()
                 elif choice == 5:
+                    self.delete_quiz()
+                elif choice == 6:
                     print("🖐 게임을 종료합니다. 안녕히 가세요!")
                     break
 
