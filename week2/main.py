@@ -89,20 +89,22 @@ class QuizGame:
                 if 1 <= play_count <= len(self.quizzes):
                     break
                 print(f"1에서 {len(self.quizzes)} 사이의 숫자를 입력하세요.")
+            
             except ValueError:
                 print("숫자를 입력하세요")
                 
         print(f"\n📑 퀴즈를 시작합니다! 문제의 개수는 {play_count} 개입니다.")
         correct_count = 0
-        
         selected_quizzes = random.sample(self.quizzes, play_count)
         
         for i, quiz in enumerate(selected_quizzes, 1):
             quiz.display(i)
             hint_used = False
             while True:
+                
                 try:
                     user_input = input("정답 입력 (1-4, 힌트: h): ").strip()
+                    
                     if not user_input:
                         print("⚠️ 빈 입력입니다. 1-4 사이의 숫자를 입력하세요.")
                         continue
@@ -113,6 +115,7 @@ class QuizGame:
                         continue
                     
                     user_answer = int(user_input)
+                    
                     if user_answer < 1 or user_answer > 4:
                         print("⚠️ 1-4 사이의 숫자를 입력하세요.")
                         continue
@@ -140,19 +143,19 @@ class QuizGame:
             self.best_score = correct_count
         print("========================================")
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.history.append({"data": now, "played": play_count, "score": correct_count})
+        self.history.append({"date": now, "played": play_count, "score": correct_count})
         self.save_data()
         
         
     def add_quiz(self):
         print("\n➕ 새로운 퀴즈를 추가합니다.")
-        question =input("문제를 입력하세요: ").strip()
+        question = input("문제를 입력하세요: ").strip()
         if not question:
             print("⚠️ 빈 입력은 허용하지 않습니다. 추가를 취소합니다.")
             return
         choices = []
         
-        for i in range(1, 6):
+        for i in range(1, 5):
             while True:
                 choice = input(f"선택지 {i}: ").strip()
                 if choice:
@@ -293,7 +296,7 @@ class QuizGame:
                 
                 # 4. 허용 범위 밖 숫자 예외 처리
                 if choice < 1 or choice > 6:
-                    print("⚠️ 잘못된 입력입니다. 1-5 사이의 숫자를 입력하세요.")
+                    print("⚠️ 잘못된 입력입니다. 1-6 사이의 숫자를 입력하세요.")
                     continue
                 
                 # 메뉴 분기 (구현 예정)
@@ -312,7 +315,7 @@ class QuizGame:
                     break
 
             except ValueError:
-                print("⚠️ 잘못된 입력입니다. 1-5 사이의 숫자를 입력하세요.")
+                print("⚠️ 잘못된 입력입니다. 1-6 사이의 숫자를 입력하세요.")
             except (KeyboardInterrupt, EOFError):
                 # Ctrl+C 또는 입력 스트림 종료 시 안전하게 종료
                 print("\n⚠️ 비정상 종료 감지! 데이터를 안전하게 보존하고 종료합니다.")
