@@ -152,7 +152,7 @@ class QuizGame:
             return
         choices = []
         
-        for i in range(1, 5):
+        for i in range(1, 6):
             while True:
                 choice = input(f"선택지 {i}: ").strip()
                 if choice:
@@ -285,14 +285,14 @@ class QuizGame:
                 
                 # 2. 빈 입력(그냥 Enter) 처리
                 if not choice_str:
-                    print("⚠️ 빈 입력입니다. 1-5 사이의 숫자를 입력하세요.")
+                    print("⚠️ 빈 입력입니다. 1-6 사이의 숫자를 입력하세요.")
                     continue
                 
                 # 3. 숫자 변환 (문자열 입력 시 ValueError 발생)
                 choice = int(choice_str)
                 
                 # 4. 허용 범위 밖 숫자 예외 처리
-                if choice < 1 or choice > 5:
+                if choice < 1 or choice > 6:
                     print("⚠️ 잘못된 입력입니다. 1-5 사이의 숫자를 입력하세요.")
                     continue
                 
